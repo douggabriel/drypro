@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Edit } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 import LoadingSpinner from '../Shared/LoadingSpinner';
 import Badge from '../Shared/Badge';
 import ProgressBar from '../Shared/ProgressBar';
 import Button from '../Shared/Button';
+import PhaseUpdateModal from './PhaseUpdateModal';
 import { formatDate } from '../../utils/dateUtils';
+import useAuth from '../../hooks/useAuth';
 
 const ActivityDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [activity, setActivity] = useState(null);
   const [phases, setPhases] = useState([]);
+  const [selectedPhase, setSelectedPhase] = useState(null);
+  const [showPhaseModal, setShowPhaseModal] = useState(false);
 
   useEffect(() => {
     loadActivity();
@@ -144,7 +149,7 @@ const ActivityDetail = () => {
             }`}
           >
             <div className="flex items-start justify-between mb-4">
-              <div>
+              <div className="flex-1">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {index + 1}. {phase.phase_name}
                 </h3>
@@ -153,6 +158,21 @@ const ActivityDetail = () => {
                   value={phase.status}
                 />
               </div>
+
+              {/* Update button - only show if not completed */}
+              {phase.status !== 'completed' && (
+                <Button
+                  size="sm"
+                  variant="blue"
+                  onClick={() => {
+                    setSelectedPhase(phase);
+                    setShowPhaseModal(true);
+                  }}
+                  icon={<Edit className="w-4 h-4" />}
+                >
+                  Update Progress
+                </Button>
+              )}
             </div>
 
             <ProgressBar progress={phase.progress} showLabel labelPosition="outside" />
@@ -165,6 +185,20 @@ const ActivityDetail = () => {
           </div>
         ))}
       </div>
+
+      {/* Phase Update Modal */}
+      {showPhaseModal && selectedPhase && (
+        <PhaseUpdateModal
+          isOpen={showPhaseModal}
+          onClose={() => {
+            setShowPhaseModal(false);
+            setSelectedPhase(null);
+          }}
+          phase={selectedPhase}
+          activityId={id}
+          onUpdate={loadActivity}
+        />
+      )}
     </div>
   );
 };

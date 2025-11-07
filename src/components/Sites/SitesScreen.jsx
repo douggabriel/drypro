@@ -3,11 +3,13 @@ import { Plus, Building2 } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 import LoadingSpinner from '../Shared/LoadingSpinner';
 import Button from '../Shared/Button';
+import AddSiteModal from './AddSiteModal';
 import { formatDate } from '../../utils/dateUtils';
 
 const SitesScreen = () => {
   const [loading, setLoading] = useState(true);
   const [sites, setSites] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     loadSites();
@@ -41,7 +43,11 @@ const SitesScreen = () => {
           <h1 className="text-3xl font-extrabold text-gray-900">Sites & Projects</h1>
           <p className="text-gray-600 mt-1">Manage your construction sites</p>
         </div>
-        <Button icon={<Plus className="w-5 h-5" />}>
+        <Button
+          variant="purple"
+          onClick={() => setShowAddModal(true)}
+          icon={<Plus className="w-5 h-5" />}
+        >
           Add Site
         </Button>
       </div>
@@ -79,6 +85,14 @@ const SitesScreen = () => {
           </div>
         ))}
       </div>
+
+      {/* Add Site Modal */}
+      {showAddModal && (
+        <AddSiteModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+        />
+      )}
     </div>
   );
 };

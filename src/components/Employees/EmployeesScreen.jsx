@@ -5,10 +5,12 @@ import LoadingSpinner from '../Shared/LoadingSpinner';
 import Button from '../Shared/Button';
 import Avatar from '../Shared/Avatar';
 import Badge from '../Shared/Badge';
+import AddEmployeeModal from './AddEmployeeModal';
 
 const EmployeesScreen = () => {
   const [loading, setLoading] = useState(true);
   const [employees, setEmployees] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     loadEmployees();
@@ -42,7 +44,11 @@ const EmployeesScreen = () => {
           <h1 className="text-3xl font-extrabold text-gray-900">Team Members</h1>
           <p className="text-gray-600 mt-1">Manage your workforce</p>
         </div>
-        <Button icon={<Plus className="w-5 h-5" />}>
+        <Button
+          variant="blue"
+          onClick={() => setShowAddModal(true)}
+          icon={<Plus className="w-5 h-5" />}
+        >
           Add Employee
         </Button>
       </div>
@@ -82,6 +88,14 @@ const EmployeesScreen = () => {
           </div>
         ))}
       </div>
+
+      {/* Add Employee Modal */}
+      {showAddModal && (
+        <AddEmployeeModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+        />
+      )}
     </div>
   );
 };

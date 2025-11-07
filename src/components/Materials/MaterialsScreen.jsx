@@ -4,10 +4,12 @@ import { supabase } from '../../supabaseClient';
 import LoadingSpinner from '../Shared/LoadingSpinner';
 import Button from '../Shared/Button';
 import Badge from '../Shared/Badge';
+import AddMaterialModal from './AddMaterialModal';
 
 const MaterialsScreen = () => {
   const [loading, setLoading] = useState(true);
   const [materials, setMaterials] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     loadMaterials();
@@ -41,7 +43,10 @@ const MaterialsScreen = () => {
           <h1 className="text-3xl font-extrabold text-gray-900">Materials Catalog</h1>
           <p className="text-gray-600 mt-1">Manage your materials inventory</p>
         </div>
-        <Button icon={<Plus className="w-5 h-5" />}>
+        <Button
+          onClick={() => setShowAddModal(true)}
+          icon={<Plus className="w-5 h-5" />}
+        >
           Add Material
         </Button>
       </div>
@@ -90,6 +95,14 @@ const MaterialsScreen = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Add Material Modal */}
+      {showAddModal && (
+        <AddMaterialModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+        />
+      )}
     </div>
   );
 };

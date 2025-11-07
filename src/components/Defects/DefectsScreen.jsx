@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import LoadingSpinner from '../Shared/LoadingSpinner';
 import Badge from '../Shared/Badge';
 import Button from '../Shared/Button';
+import ReportDefectModal from './ReportDefectModal';
 import { PRIORITY_CONFIG } from '../../utils/constants';
 import { formatRelativeTime } from '../../utils/dateUtils';
 
 const DefectsScreen = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [defects, setDefects] = useState([]);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   useEffect(() => {
     loadDefects();
@@ -43,7 +47,11 @@ const DefectsScreen = () => {
           <h1 className="text-3xl font-extrabold text-gray-900">Defects</h1>
           <p className="text-gray-600 mt-1">Track and manage construction defects</p>
         </div>
-        <Button icon={<Plus className="w-5 h-5" />}>
+        <Button
+          variant="danger"
+          onClick={() => setShowReportModal(true)}
+          icon={<Plus className="w-5 h-5" />}
+        >
           Report Defect
         </Button>
       </div>
@@ -54,7 +62,8 @@ const DefectsScreen = () => {
           {defects.map((defect) => (
             <div
               key={defect.id}
-              className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow border-l-4"
+              onClick={() => navigate(`/defects/${defect.id}`)}
+              className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow border-l-4 cursor-pointer"
               style={{ borderColor: PRIORITY_CONFIG[defect.priority].dotColor }}
             >
               {/* Header */}
@@ -83,7 +92,22 @@ const DefectsScreen = () => {
       ) : (
         <div className="text-center py-12 bg-white rounded-2xl">
           <p className="text-gray-500 text-lg">No defects reported</p>
+          <Button
+            variant="danger"
+            className="mt-4"
+            onClick={() => setShowReportModal(true)}
+          >
+            Report First Defect
+          </Button>
         </div>
+      )}
+
+      {/* Report Defect Modal */}
+      {showReportModal && (
+        <ReportDefectModal
+          isOpen={showReportModal}
+          onClose={() => setShowReportModal(false)}
+        />
       )}
     </div>
   );
