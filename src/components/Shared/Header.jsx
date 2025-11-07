@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Menu, Bell, LogOut } from 'lucide-react';
+import React from 'react';
+import { Menu, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import Avatar from './Avatar';
 import Button from './Button';
+import NotificationCenter from './NotificationCenter';
 
 /**
  * Header component
@@ -13,7 +14,6 @@ import Button from './Button';
 const Header = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const { currentUser, signOut } = useAuth();
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleLogout = async () => {
     const result = await signOut();
@@ -47,16 +47,8 @@ const Header = ({ onMenuClick }) => {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Notifications */}
-          <button
-            onClick={() => navigate('/notifications')}
-            className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Notifications"
-          >
-            <Bell className="w-6 h-6 text-gray-700" />
-            {/* Notification badge */}
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
+          {/* Notification Center */}
+          <NotificationCenter />
 
           {/* User menu */}
           <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
