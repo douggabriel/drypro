@@ -25,6 +25,8 @@ const DefectDetail = () => {
 
   const loadDefect = async () => {
     try {
+      console.log('Loading defect with ID:', id);
+
       // Load defect
       const { data: defectData, error: defectError } = await supabase
         .from('defects')
@@ -37,7 +39,14 @@ const DefectDetail = () => {
         .eq('id', id)
         .single();
 
-      if (defectError) throw defectError;
+      console.log('Defect data:', defectData);
+      console.log('Defect error:', defectError);
+
+      if (defectError) {
+        console.error('Error loading defect:', defectError);
+        throw defectError;
+      }
+
       setDefect(defectData);
 
       // Load defect phases
@@ -47,10 +56,19 @@ const DefectDetail = () => {
         .eq('defect_id', id)
         .order('phase_order', { ascending: true });
 
-      if (phasesError) throw phasesError;
+      console.log('Defect phases data:', phasesData);
+      console.log('Defect phases error:', phasesError);
+
+      if (phasesError) {
+        console.error('Error loading defect phases:', phasesError);
+        throw phasesError;
+      }
+
       setPhases(phasesData || []);
     } catch (error) {
-      console.error('Error loading defect:', error);
+      console.error('Error in loadDefect:', error);
+      // Set defect to null to show the "not found" message
+      setDefect(null);
     } finally {
       setLoading(false);
     }

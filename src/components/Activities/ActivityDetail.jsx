@@ -27,6 +27,8 @@ const ActivityDetail = () => {
 
   const loadActivity = async () => {
     try {
+      console.log('Loading activity with ID:', id);
+
       // Load activity
       const { data: activityData, error: activityError } = await supabase
         .from('activities')
@@ -34,7 +36,14 @@ const ActivityDetail = () => {
         .eq('id', id)
         .single();
 
-      if (activityError) throw activityError;
+      console.log('Activity data:', activityData);
+      console.log('Activity error:', activityError);
+
+      if (activityError) {
+        console.error('Error loading activity:', activityError);
+        throw activityError;
+      }
+
       setActivity(activityData);
 
       // Load phases
@@ -44,10 +53,19 @@ const ActivityDetail = () => {
         .eq('activity_id', id)
         .order('phase_order', { ascending: true });
 
-      if (phasesError) throw phasesError;
+      console.log('Phases data:', phasesData);
+      console.log('Phases error:', phasesError);
+
+      if (phasesError) {
+        console.error('Error loading phases:', phasesError);
+        throw phasesError;
+      }
+
       setPhases(phasesData || []);
     } catch (error) {
-      console.error('Error loading activity:', error);
+      console.error('Error in loadActivity:', error);
+      // Set activity to null to show the "not found" message
+      setActivity(null);
     } finally {
       setLoading(false);
     }
