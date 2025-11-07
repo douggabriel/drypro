@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   ClipboardList,
   Clock,
@@ -14,6 +15,7 @@ import LoadingSpinner from '../Shared/LoadingSpinner';
 import { supabase } from '../../supabaseClient';
 
 const DashboardScreen = () => {
+  const navigate = useNavigate();
   const { currentUser, isSupervisor } = useAuth();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -138,12 +140,12 @@ const DashboardScreen = () => {
             <p className="text-gray-600">
               There are {stats.openDefects} open defect{stats.openDefects > 1 ? 's' : ''} that need attention.
             </p>
-            <a
-              href="/defects"
+            <button
+              onClick={() => navigate('/defects')}
               className="inline-block mt-4 text-red-600 font-semibold hover:underline"
             >
               View all defects →
-            </a>
+            </button>
           </div>
         </div>
       )}
@@ -169,12 +171,12 @@ const DashboardScreen = () => {
                     {activity.type === 'normal' ? 'Unit Work' : 'Patch Work'} • {activity.overall_progress}% complete
                   </p>
                 </div>
-                <a
-                  href={`/activities/${activity.id}`}
+                <button
+                  onClick={() => navigate(`/activities/${activity.id}`)}
                   className="text-blue-600 font-medium hover:underline"
                 >
                   View →
-                </a>
+                </button>
               </div>
             ))}
           </div>
