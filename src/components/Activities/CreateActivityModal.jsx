@@ -5,7 +5,9 @@ import Select from '../Shared/Select';
 import Textarea from '../Shared/Textarea';
 import Button from '../Shared/Button';
 import FileUpload from '../Shared/FileUpload';
+import VoiceRecorder from '../Shared/VoiceRecorder';
 import Badge from '../Shared/Badge';
+import { Camera, Mic } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 import { NORMAL_PHASES, PATCH_PHASES } from '../../utils/constants';
 import useAuth from '../../hooks/useAuth';
@@ -27,6 +29,7 @@ const CreateActivityModal = ({ isOpen, onClose, activityType = 'normal' }) => {
     assignedTo: '',
     description: '',
     photos: [],
+    voiceNote: null,
   });
   const [errors, setErrors] = useState({});
 
@@ -183,16 +186,45 @@ const CreateActivityModal = ({ isOpen, onClose, activityType = 'normal' }) => {
           required={activityType === 'patch'}
         />
 
-        {/* Photos */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Location Photos
-          </label>
+        {/* Photos - Enhanced */}
+        <div className="p-6 bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl border-2 border-orange-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center">
+              <Camera className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <label className="block text-lg font-bold text-gray-900">
+                Location Photos
+              </label>
+              <p className="text-sm text-gray-600">Upload photos of the work area (max 5)</p>
+            </div>
+          </div>
           <FileUpload
             value={formData.photos}
             onChange={(files) => setFormData({ ...formData, photos: files })}
             multiple
             maxFiles={5}
+          />
+        </div>
+
+        {/* Voice Note - NEW */}
+        <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">
+              <Mic className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <label className="block text-lg font-bold text-gray-900">
+                Voice Note (Optional)
+              </label>
+              <p className="text-sm text-gray-600">Record additional notes about this {activityType === 'normal' ? 'unit' : 'patch'}</p>
+            </div>
+          </div>
+          <VoiceRecorder
+            onSave={(audioBlob, duration) => {
+              setFormData({ ...formData, voiceNote: { blob: audioBlob, duration } });
+            }}
+            maxDuration={180}
           />
         </div>
 

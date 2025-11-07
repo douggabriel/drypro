@@ -6,6 +6,7 @@ import LoadingSpinner from '../Shared/LoadingSpinner';
 import Badge from '../Shared/Badge';
 import ProgressBar from '../Shared/ProgressBar';
 import Button from '../Shared/Button';
+import PhotoGallery from '../Shared/PhotoGallery';
 import PhaseUpdateModal from './PhaseUpdateModal';
 import { formatDate } from '../../utils/dateUtils';
 import useAuth from '../../hooks/useAuth';
@@ -132,6 +133,13 @@ const ActivityDetail = () => {
           <ProgressBar progress={activity.overall_progress} showLabel labelPosition="outside" size="lg" />
         </div>
       </div>
+
+      {/* Photo Gallery */}
+      <PhotoGallery
+        photos={activity.photos || []}
+        title="Location & Progress Photos"
+        emptyMessage="No photos have been uploaded for this activity yet"
+      />
 
       {/* Phases */}
       <div className="space-y-4">

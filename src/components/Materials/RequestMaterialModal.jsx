@@ -4,6 +4,8 @@ import Input from '../Shared/Input';
 import Select from '../Shared/Select';
 import Textarea from '../Shared/Textarea';
 import Button from '../Shared/Button';
+import VoiceRecorder from '../Shared/VoiceRecorder';
+import { Mic } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 import { MATERIAL_UNITS, URGENCY_CONFIG } from '../../utils/constants';
 import useAuth from '../../hooks/useAuth';
@@ -20,6 +22,7 @@ const RequestMaterialModal = ({ isOpen, onClose }) => {
     unitLocation: '',
     urgency: 'normal',
     notes: '',
+    voiceNote: null,
   });
   const [errors, setErrors] = useState({});
 
@@ -189,6 +192,27 @@ const RequestMaterialModal = ({ isOpen, onClose }) => {
           maxLength={300}
           showCount
         />
+
+        {/* Voice Note - NEW */}
+        <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">
+              <Mic className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <label className="block text-lg font-bold text-gray-900">
+                Voice Note (Optional)
+              </label>
+              <p className="text-sm text-gray-600">Record audio details about the material request</p>
+            </div>
+          </div>
+          <VoiceRecorder
+            onSave={(audioBlob, duration) => {
+              setFormData({ ...formData, voiceNote: { blob: audioBlob, duration } });
+            }}
+            maxDuration={120}
+          />
+        </div>
 
         {errors.submit && (
           <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">

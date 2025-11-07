@@ -5,6 +5,8 @@ import Select from '../Shared/Select';
 import Textarea from '../Shared/Textarea';
 import Button from '../Shared/Button';
 import FileUpload from '../Shared/FileUpload';
+import VoiceRecorder from '../Shared/VoiceRecorder';
+import { Mic, Camera } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 import { DEFECT_CATEGORIES, PRIORITY_CONFIG, DEFECT_PHASES } from '../../utils/constants';
 import useAuth from '../../hooks/useAuth';
@@ -21,6 +23,7 @@ const ReportDefectModal = ({ isOpen, onClose, activityId = null, prefilledLocati
     category: '',
     assignedTo: '',
     photos: [],
+    voiceNote: null,
   });
   const [errors, setErrors] = useState({});
 
@@ -206,11 +209,19 @@ const ReportDefectModal = ({ isOpen, onClose, activityId = null, prefilledLocati
           }))}
         />
 
-        {/* Photos */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Photos <span className="text-red-500">*</span>
-          </label>
+        {/* Photos - Enhanced with visual header */}
+        <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+              <Camera className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <label className="block text-lg font-bold text-gray-900">
+                Defect Photos <span className="text-red-500">*</span>
+              </label>
+              <p className="text-sm text-gray-600">Required - Upload at least 1 photo (max 10)</p>
+            </div>
+          </div>
           <FileUpload
             value={formData.photos}
             onChange={(files) => setFormData({ ...formData, photos: files })}
@@ -218,8 +229,29 @@ const ReportDefectModal = ({ isOpen, onClose, activityId = null, prefilledLocati
             maxFiles={10}
           />
           {errors.photos && (
-            <p className="mt-1 text-sm text-red-600">{errors.photos}</p>
+            <p className="mt-2 text-sm text-red-600 font-semibold">{errors.photos}</p>
           )}
+        </div>
+
+        {/* Voice Note - NEW */}
+        <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">
+              <Mic className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <label className="block text-lg font-bold text-gray-900">
+                Voice Note (Optional)
+              </label>
+              <p className="text-sm text-gray-600">Record audio description of the defect</p>
+            </div>
+          </div>
+          <VoiceRecorder
+            onSave={(audioBlob, duration) => {
+              setFormData({ ...formData, voiceNote: { blob: audioBlob, duration } });
+            }}
+            maxDuration={180}
+          />
         </div>
 
         {errors.submit && (
